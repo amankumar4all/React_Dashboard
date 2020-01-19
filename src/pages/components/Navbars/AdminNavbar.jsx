@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import name from "./../../views/examples/Register.jsx";
+import Login from "./../../views/examples/Login.jsx";
 // reactstrap components
 import {
   DropdownMenu,
@@ -20,22 +20,35 @@ import {
 } from "reactstrap";
 
 class AdminNavbar extends React.Component {
-  listItems() {
-    let name = this.state.name;
-    return (
-      <ul>
-        {
-          name.map((val, index) => {
-            return (
-              <li key={0}>
-                { val }
-              </li>
-            );
-          })
-        }
-      </ul>
-    );
+  // listItems() {
+  //   let name = this.state.name;
+  //   return (
+  //     <ul>
+  //       {
+  //         name.map((val, index) => {
+  //           return (
+  //             <li key={0}>
+  //               { val }
+  //             </li>
+  //           );
+  //         })
+  //       }
+  //     </ul>
+  //   );
+  // }
+
+  constructor(props){
+    super(props);
+    let token=Login.token;
+    //  token=localStorage.getItem("token");
+
+    this.logout=this.logout.bind(this);
   }
+  logout(e){
+    e.preventDefault()
+    // this.token ==  null;
+  }
+
   render() {
     return (
       <>
@@ -71,7 +84,7 @@ class AdminNavbar extends React.Component {
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        Jessica Jones {this.listItems()}
+                        Jessica Jones 
                       </span>
                     </Media>
                   </Media>
@@ -99,7 +112,7 @@ class AdminNavbar extends React.Component {
                   <DropdownItem divider />
                   <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
                     <i className="ni ni-user-run" />
-                    <span >Logout</span>
+                    <span onClick={this.logout} >Logout</span>
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>

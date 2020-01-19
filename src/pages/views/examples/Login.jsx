@@ -41,7 +41,7 @@ class Login extends React.Component {
     super(props);
     const token=localStorage.getItem("token")
 
-    let loggedIn = false;
+    let loggedIn;
     let forgetValue = false;
     if(token == null){
         loggedIn=false
