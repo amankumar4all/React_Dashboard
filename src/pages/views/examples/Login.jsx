@@ -18,6 +18,10 @@
 import React from "react";
 import {Redirect} from 'react-router-dom';  
 import ForgetPwd from "./ForgetPwd.js";
+import { validateAll } from 'indicative';
+
+
+
 
 // reactstrap components
 import {
@@ -43,6 +47,7 @@ class Login extends React.Component {
 
     let loggedIn;
     let forgetValue = false;
+  
     if(token == null){
         loggedIn=false
     }
@@ -58,7 +63,7 @@ class Login extends React.Component {
     this.onChange=this.onChange.bind(this);
     this.submitForm=this.submitForm.bind(this);
     this.forgetPwd=this.forgetPwd.bind(this);
-    
+    this.validateEmail=this.validateEmail.bind(this);
 }
 
 onChange(e){
@@ -66,11 +71,36 @@ onChange(e){
         [e.target.name]: e.target.value
     })
 }
+validateEmail(e){
+  e.preventDefault()
+  const{email}=this.state;
+  var atposition=email.indexOf("@");
+  var dotposition=email.lastIndexOf(".");
+  if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+    alert('Enter Valid Email'); 
+    // alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+    return false;  
+    } 
+}
 
 submitForm(e){
     e.preventDefault()
     const {email, password}= this.state;
-    if(email==="login" && password ==="pwd"){
+
+    // const data=this.state;
+    // const rules={
+    //   email: 'required|email',
+    //   password : 'required|string|min:8'
+    // }
+    // validateAll(data,rules)
+    //   .then(() =>{
+    //     console.log("password is---")
+    //   })
+    //   .catch(errors =>{
+    //     console.log(errors);
+    //   })
+
+    if(email==="login@x.com" && password ==="Aman1234"){
         localStorage.setItem("token","jsfsbvisnvjasnvasijbnsjnbiu")
         this.setState({
             loggedIn: true
@@ -99,44 +129,9 @@ forgetPwd(e){
       <>
         <Col lg="5" md="7">
           <Card className="bg-secondary shadow border-0">
-            <CardHeader className="bg-transparent pb-5">
-              <div className="text-muted text-center mt-2 mb-3">
-                <small>Sign in with</small>
-              </div>
-              <div className="btn-wrapper text-center">
-                <Button
-                  className="btn-neutral btn-icon"
-                  color="default"
-                  href="#pablo"
-                  onClick={e => e.preventDefault()}
-                >
-                  <span className="btn-inner--icon">
-                    <img
-                      alt="..."
-                      src={require("./../../assets/img/icons/common/github.svg")}
-                    />
-                  </span>
-                  <span className="btn-inner--text">Github</span>
-                </Button>
-                <Button
-                  className="btn-neutral btn-icon"
-                  color="default"
-                  href="#pablo"
-                  onClick={e => e.preventDefault()}
-                >
-                  <span className="btn-inner--icon">
-                    <img
-                      alt="..."
-                      src={require("./../../assets/img/icons/common/google.svg")}
-                    />
-                  </span>
-                  <span className="btn-inner--text">Google</span>
-                </Button>
-              </div>
-            </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-                <small>Or sign in with credentials</small>
+                <small>Sign in with credentials</small>
               </div>
               <Form role="form">
                 <FormGroup className="mb-3">
@@ -146,7 +141,7 @@ forgetPwd(e){
                         <i className="ni ni-email-83" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" name="email" value={this.state.email} onChange={this.onChange} />
+                    <Input placeholder="Email" type="email" name="email" value={this.state.email} onChange={this.onChange} onBlur={this.validateEmail}/>
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>

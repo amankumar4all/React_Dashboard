@@ -17,6 +17,7 @@
 */
 import React from "react";
 import {Redirect} from 'react-router-dom';  
+import '../../assets/css/error.css';
 
 // reactstrap components
 import {
@@ -34,8 +35,19 @@ import {
   Col
 } from "reactstrap";
 
-class Register extends React.Component {
 
+const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
+
+const validateForm= (errors)=>{
+  let valid=true;
+  Object.values(errors).forEach(
+    (val)=> val.length >0 && (valid= false),
+  );
+  console.log(valid);
+  return valid;
+}
+
+class Register extends React.Component {
   constructor(props){
     super(props);
     const token=localStorage.getItem("token")
@@ -48,14 +60,43 @@ class Register extends React.Component {
         password:"",
         privacy:false,
         logIn:false,
-        loginData: []
+        errors:{
+          name:'',
+          email:'',
+          password:''
+        }
             }
     
     this.onChange=this.onChange.bind(this);
     this.submitForm=this.submitForm.bind(this);
     this.forgetPwd=this.forgetPwd.bind(this);
-    this.changePage=this.changePage.bind(this);
-    
+    this.validateEmail=this.validateEmail.bind(this);
+    this.validateName=this.validateName.bind(this);
+
+  }
+validateName(e){
+  e.preventDefault();
+  const{name}=this.state;
+  if(name.length < 3){
+    alert("Name must be greater than 3 character");
+  }
+  else if(name.length >15){
+    alert("Name must be less than 15 character")
+  }
+}
+validateEmail(e){
+  e.preventDefault()
+  const{email}=this.state;
+  var atposition=email.indexOf("@");
+  var dotposition=email.lastIndexOf(".");
+  if (atposition<1 || dotposition<atposition+2 || dotposition+2>=email.length){  
+    alert("enter valid email");
+    // alert("Please enter a valid e-mail address \n atpostion:"+atposition+"\n dotposition:"+dotposition);  
+    var email1=validEmailRegex.test()
+        ? ''
+        : 'Email is not valid!';
+    return false;  
+    } 
 }
 toggleChangePrivacy=()=>{
   this.setState(prevState =>({
@@ -64,90 +105,83 @@ toggleChangePrivacy=()=>{
 }
 
 onChange(e){
+    e.preventDefault();
+    const {inputData,value}=e.target;
+    let errors=this.state.errors;
+    let email=this.state.email;
+
+    // switch(inputData){
+    //   case 'name':
+    //     errors.name=value.length< 5 
+    //     ? 'Full name must be 5 character long!'
+    //     : '';
+    //     break;
+    //   case 'email': 
+    //     email=value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+    //   this.ValidateEmail(this.email);
+    //     errors.email=validEmailRegex.test(value)
+    //     ? ''
+    //     : 'Email is not valid!';
+    //     break;
+    //   case 'password':
+    //     errors.password=value.length < 8
+    //     ? 'Password must be 8 character long!'
+    //     : '';
+    //     break;
+    //   default:
+    //     break;
+    // }
+
     this.setState({
-        [e.target.name]: e.target.value
-    })
+      // errors,[inputData]:value,
+      [e.target.name]: e.target.value
+  });
 }
-
+ValidateEmail(mail) 
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+  {
+    return (true)
+  }
+    alert("You have entered an invalid email address!")
+    return (false)
+}
 submitForm(e){
-    e.preventDefault()
-    const {name,email, password,loginData}= this.state;
-
-    if (this.state.name ==='' || this.state.email ==='' || this.state.password ===''){
-      alert('Fill Your Registration Form');
+    e.preventDefault();
+    const {name,email, password,inputData}= this.state;
+    if(validateForm(this.state.errors)){
+      console.info("Valid entry");
+      console.log(this.state.errors);
+  //   if (this.state.name ==='' || this.state.email ==='' || this.state.password ===''){
+  //     alert('Fill Your Registration Form');
   } 
   else {
-    loginData.push(name,email,password);
-    this.setState({
-      logIn:true
-    })
+    console.error('Invalid');
     // this.setState({
-    //    name : this.state.name.value,
-    //    email : this.state.email.value,
-    //    name : this.state.name.value
+    //   logIn:true
     // })
+  
   }
-    // console.log(loginData);
 }
-changePage(loginData){
-
-}
-
-
+// }
 forgetPwd(e){
   e.preventDefault()
   this.setState({
   forgetValue : true
   })
 }
-
-
   render() {
     if(this.state.logIn){
       return     <Redirect to="/admin/index" />
     }
+    const {errors}=this.state;
     return (
       <>
         <Col lg="6" md="8">
           <Card className="bg-secondary shadow border-0">
-            <CardHeader className="bg-transparent pb-5">
-              <div className="text-muted text-center mt-2 mb-4">
-                <small>Sign up with</small>
-              </div>
-              <div className="text-center">
-                <Button
-                  className="btn-neutral btn-icon mr-4"
-                  color="default"
-                  href="#pablo"
-                  onClick={e => e.preventDefault()}
-                >
-                  <span className="btn-inner--icon">
-                    <img
-                      alt="..."
-                      src={require("./../../assets/img/icons/common/github.svg")}
-                    />
-                  </span>
-                  <span className="btn-inner--text">Github</span>
-                </Button>
-                <Button
-                  className="btn-neutral btn-icon"
-                  color="default"
-                  href="#pablo"
-                  onClick={e => e.preventDefault()}
-                >
-                  <span className="btn-inner--icon">
-                    <img
-                      alt="..."
-                      src={require("./../../assets/img/icons/common/google.svg")}
-                    />
-                  </span>
-                  <span className="btn-inner--text">Google</span>
-                </Button>
-              </div>
-            </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-                <small>Or sign up with credentials</small>
+                <small>Sign up with Credentials</small>
               </div>
               <Form role="form">
                 <FormGroup>
@@ -157,7 +191,9 @@ forgetPwd(e){
                         <i className="ni ni-hat-3" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Name" type="text" name="name" value={this.state.loginData.name} onChange={this.onChange} required/>
+                    <Input placeholder="Name" type="text" name="name" value={this.state.name} onChange={this.onChange} onBlur={this.validateName}/>
+                    {errors.name.length > 0 && 
+                <span className='error'>{errors.name}</span>}
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -167,7 +203,9 @@ forgetPwd(e){
                         <i className="ni ni-email-83" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" name="email" value={this.state.loginData.email} onChange={this.onChange}/>
+                    <Input placeholder="Email" type="email" name="email" className="error" value={this.state.email} onChange={this.onChange} onBlur={this.validateEmail}/>
+                    {errors.email.length > 0 && 
+                <span className='error'>{errors.email}</span>}
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -177,7 +215,9 @@ forgetPwd(e){
                         <i className="ni ni-lock-circle-open" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Password" type="password" name="password" value={this.state.loginData.password} onChange={this.onChange} />
+                    <Input placeholder="Password" type="password" name="password" value={this.state.password} onChange={this.onChange} />
+                    {errors.password.length > 0 && 
+                <span className='error'>{errors.password}</span>}
                   </InputGroup>
                 </FormGroup>
                 <div className="text-muted font-italic">
