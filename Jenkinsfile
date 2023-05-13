@@ -17,7 +17,8 @@ pipeline {
             }
         }
         stage("deploy-dev"){
-            sshagent(['tomcat']) {
+            steps{
+                sshagent(['tomcat']) {
             sh """
                 scp -o StrictHostKeyChecking=no target/myweb.war ec2-user@172.31.42.197:/opt/tomcat8/webapps/
                 
@@ -27,5 +28,6 @@ pipeline {
                """
         }
         }
+            }
     }
 }
